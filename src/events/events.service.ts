@@ -1,9 +1,8 @@
-
-import { Injectable } from '@nestjs/common';
-import { GoogleCalendarService } from '../services/google-calendar.service';
-import { GoogleSheetsService } from '../services/google-sheets.service';
-import { SlackService } from '../services/slack.service';
-import { calendar_v3 } from 'googleapis'
+import { Injectable } from "@nestjs/common";
+import { GoogleCalendarService } from "../services/google-calendar.service";
+import { GoogleSheetsService } from "../services/google-sheets.service";
+import { SlackService } from "../services/slack.service";
+import { calendar_v3 } from "googleapis";
 
 @Injectable()
 export class EventsService {
@@ -13,15 +12,22 @@ export class EventsService {
     private readonly slackService: SlackService
   ) {}
 
-  async createEvent(googleCalendarEventData: calendar_v3$Event, googleSheetEventData, slackEventData) {    // Add event to Google Calendar
-    const calendarEvent = await this.googleCalendarService.createEvent(googleCalendarEventData);
-    
+  async createEvent(
+    googleCalendarEventData: calendar_v3.Schema$Event,
+    googleSheetEventData: any,
+    slackEventData: any
+  ) {
+    // Add event to Google Calendar
+    const calendarEvent = await this.googleCalendarService.createEvent(
+      googleCalendarEventData
+    );
+
     // Update Google Sheets
     await this.googleSheetsService.addEventToSheet(googleSheetEventData);
-    
+
     // Send Slack notification
     await this.slackService.notifyEventCreation(slackEventData);
-    
+
     return calendarEvent;
   }
 
@@ -30,7 +36,10 @@ export class EventsService {
   }
 
   async updateEvent(id: string, eventData: any) {
-    const updatedEvent = await this.googleCalendarService.updateEvent(id, eventData);
+    const updatedEvent = await this.googleCalendarService.updateEvent(
+      id,
+      eventData
+    );
     await this.googleSheetsService.updateEventInSheet(id, eventData);
     await this.slackService.notifyEventUpdate(eventData);
     return updatedEvent;
