@@ -1,0 +1,6 @@
+google-service-account-key
+/node_modules
+.env
+.git
+/dist
+
