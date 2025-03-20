@@ -6,21 +6,18 @@ import {
   Put,
   Param,
   Delete,
+  Query,
 } from "@nestjs/common";
 import { EventsService } from "./events.service";
 import { CreateEventRequestPayload } from "./types/request-payload";
-import { calendar_v3 } from "googleapis";
 
 @Controller("events")
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Post()
-  async createEvent(@Body() eventData: CreateEventRequestPayload) {
-    console.log(eventData);
-    const googleCalendarEventPayload: calendar_v3.Schema$Event = {};
-    //return this.eventsService.createEvent(eventData);
-    return true;
+  async createEvent(@Body() eventData: any) {
+    return this.eventsService.createEvent(eventData);
   }
 
   @Get()
@@ -28,13 +25,20 @@ export class EventsController {
     return this.eventsService.getAllEvents();
   }
 
-  @Put(":id")
-  async updateEvent(@Param("id") id: string, @Body() eventData: any) {
-    return this.eventsService.updateEvent(id, eventData);
+  @Put()
+  async updateEvent(@Body() eventData: any) {
+    return this.eventsService.updateEvent(
+      eventData.eventId,
+      eventData.calendarEventId,
+      eventData
+    );
   }
 
-  @Delete(":id")
-  async deleteEvent(@Param("id") id: string) {
-    return this.eventsService.deleteEvent(id);
+  @Delete()
+  async deleteEvent(
+    @Query("eventId") eventId: string,
+    @Query("calendarEventId") calendarEventId: string
+  ) {
+    return this.eventsService.deleteEvent(eventId, calendarEventId);
   }
 }
