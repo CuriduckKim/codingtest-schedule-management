@@ -3,4 +3,4 @@ google-service-account-key.json
 .env
 .git
 /dist
-
+goorm.manifest

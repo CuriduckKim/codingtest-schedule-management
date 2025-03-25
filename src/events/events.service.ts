@@ -129,14 +129,6 @@ export class EventsService {
     );
 
     // Send Slack notification
-    const slackEventData = {
-      title,
-      company,
-      start: formatDate(startDatetime),
-      end: formatDate(endDatetime),
-      assessmentUrl,
-    };
-
     await this.slackService.notifyEventCreation({
       title,
       company,
@@ -202,10 +194,17 @@ export class EventsService {
       await this.googleSheetsService.getEventFromSheet(
         `시트1!${eventRowIndexFromSheet}:${eventRowIndexFromSheet}`
       );
-    await this.googleCalendarService.deleteEvent(calendarEventId);
+    try {
+      await this.googleCalendarService.deleteEvent(calendarEventId);
+    } catch (err) {
+      console.log(err);
+    }
+    const startIndex: number = eventRowIndexFromSheet - 1;
+    const endIndex: number = Number(eventRowIndexFromSheet);
     await this.googleSheetsService.deleteEventFromSheet(
-      `시트1!${eventRowIndexFromSheet}:${eventRowIndexFromSheet}`,
-      eventId
+      0,
+      startIndex,
+      endIndex
     );
     if (previousEventRow)
       await this.slackService.notifyEventDeletion(

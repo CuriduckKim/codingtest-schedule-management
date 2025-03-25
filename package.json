@@ -6,7 +6,7 @@
   "scripts": {
     "build": "nest build",
     "start": "node dist/main.js",
-    "start:dev": "npm run postbuild & nest start --watch",
+    "start:dev": "nest start --watch",
     "test": "jest",
     "postbuild": "cp google-service-account-key.json dist/"
   },

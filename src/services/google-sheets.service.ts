@@ -75,10 +75,27 @@ export class GoogleSheetsService {
     // Implementation for updating event in sheet
   }
 
-  async deleteEventFromSheet(sheetRange: string, eventId: string) {
-    await this.sheets.spreadsheets.values.clear({
-      spreadsheetId: this.configService.get("SPREADSHEET_ID"),
-      range: sheetRange,
+  async deleteEventFromSheet(
+    sheetIndex: number,
+    rowStartIndex: number,
+    rowEndIndex: number
+  ) {
+    await this.sheets.spreadsheets.batchUpdate({
+      spreadsheetId: this.configService.get("SPREADSHEET_ID") || "",
+      requestBody: {
+        requests: [
+          {
+            deleteDimension: {
+              range: {
+                sheetId: sheetIndex, // 예: sheetId=0 (첫 번째 시트). 실제 ID는 상황에 맞춰 지정
+                dimension: "ROWS", // 행 단위 삭제
+                startIndex: rowStartIndex, // 0-based 인덱스, (예: 5번째 행부터)
+                endIndex: rowEndIndex, // 5번째 행만 삭제(종료 인덱스는 미포함)
+              },
+            },
+          },
+        ],
+      },
     });
   }
 }
